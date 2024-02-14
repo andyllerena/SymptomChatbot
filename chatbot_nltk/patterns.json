@@ -1,0 +1,36 @@
+{
+   "intents":[
+    {
+        "tag": "greeting", 
+        "phrases": ["hello", "hi", "hey", "howdy", "greetings"],
+        "responses": ["Hello! How can I assist you today?"]
+    },
+   
+    {
+        "tag" : "weather",
+        "phrases": ["What's the weather like today?", "Tell me about the weather", "Is it going to rain?", "How's the weather?"],
+        "responses": ["I'm sorry, I don't have real-time weather information."]
+    },
+       
+    {
+        "tag" : "goodbye",
+        "phrases": ["goodbye", "bye", "see you later", "farewell"],
+        "responses": ["Goodbye! Have a great day."]
+    },
+
+    {
+        "tag" : "thanks",
+        "phrases": ["thank you", "thanks", "thanks a lot", "appreciate it"],
+        "responses": ["You're welcome! If you have more questions, feel free to ask."]
+    },
+
+    {
+        "tag" : "conversation", 
+        "phrases": ["tell me a joke", "talk to me", "anything interesting?"],
+        "responses": ["Sure, here's a joke: Knock Knock."]
+    }
+   ]
+  
+}
+
+  
