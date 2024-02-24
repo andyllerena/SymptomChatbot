@@ -6,7 +6,8 @@ from torch.utils.data import Dataset, DataLoader
 from nltk_utils import bag_of_words, tokenize, stem
 from model import NeuralNet
  
-with open('C:\\Users\\aller\\Desktop\\chatbot\\chatbot_nltk\\patterns.json', 'r') as f:
+with open('C:\\Users\\aller\\Desktop\\chatbot\\chatbot_nltk\\disease_precautions.json', 'r') as f:
+
     intents = json.load(f)
 
 #Preparing the model:
@@ -40,10 +41,12 @@ print(len(all_words), "unique stemmed words:", all_words)
 # create training data:
 X_train = []
 y_train = []
+
 for (pattern_sentence, tag) in xy:
     # X: bag of words for each pattern_sentence
     bag = bag_of_words(pattern_sentence, all_words)
     X_train.append(bag)
+
     # y: PyTorch CrossEntropyLoss needs only class labels 
     label = tags.index(tag)
     y_train.append(label)
@@ -52,14 +55,14 @@ X_train = np.array(X_train)
 y_train = np.array(y_train)
 
 # Hyper-parameters 
-num_epochs = 200
-batch_size = 16
+num_epochs = 500
+batch_size = 8
 learning_rate = 0.001
 input_size = len(X_train[0])
-hidden_size = 16
+hidden_size = 32
 output_size = len(tags)
 print(input_size, output_size)
-dropout_rate = 0.2
+dropout_rate = 0.3
 
 class ChatDataset(Dataset):
     def __init__(self):
