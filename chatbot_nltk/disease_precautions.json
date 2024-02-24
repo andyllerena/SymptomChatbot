@@ -1,0 +1,119 @@
+{
+    "intents": [
+    {
+        "tag": "greeting", 
+        "phrases": ["hello", "hi", "hey", "howdy", "greetings"],
+        "responses": ["Hello! How can I assist you today?"]
+    },
+
+    {
+        "tag" : "goodbye",
+        "phrases": ["goodbye", "bye", "see you later", "farewell"],
+        "responses": ["Goodbye! Have a great day."]
+    },
+
+    {
+        "tag" : "thanks",
+        "phrases": ["thank you", "thanks", "thanks a lot", "appreciate it"],
+        "responses": ["You're welcome! If you have more questions, feel free to ask."]
+    },
+
+      {
+        "tag": "Malaria",
+        "phrases": [
+          "I think I might have malaria. What should I do?",
+          "Is oily food okay if I have malaria?",
+          "How to keep mosquitoes out to prevent malaria?",
+          "What are the symptoms of malaria?"
+        ],
+        "responses": [
+          "Consult nearest hospital",
+          "Avoid oily food",
+          "Avoid non-veg food",
+          "Keep mosquitoes out"
+        ]
+      },
+      {
+        "tag": "Allergy",
+        "phrases": [
+          "I have an allergy. What should I apply?",
+          "How to compress itching from an allergy?",
+          "Covering the area with a bandage helps with allergies?",
+          "Any home remedies for allergy relief?"
+        ],
+        "responses": [
+          "Apply calamine",
+          "Cover the area with a bandage",
+          "Use ice to compress itching"
+        ]
+      },
+      {
+        "tag": "Pneumonia",
+        "phrases": [
+            "What are the symptoms of pneumonia?",
+            "I feel really sick. Could it be pneumonia?",
+            "Should I rest if I suspect pneumonia?",
+            "Tell me about pneumonia medications."
+        ],
+        "responses": [
+            "Consult your healthcare professional immediately for a proper diagnosis.",
+            "Common symptoms include high fever, chest pain, and difficulty breathing.",
+            "Yes, it's crucial to get plenty of rest to aid the recovery process.",
+            "Pneumonia medications may include antibiotics and anti-inflammatory drugs.",
+            "Stay hydrated to help manage pneumonia symptoms.",
+            "Follow your doctor's advice on prescribed medications and complete the full course.",
+            "Avoid smoking and secondhand smoke, as it can worsen pneumonia symptoms.",
+            "Use a humidifier to add moisture to the air, which can ease breathing discomfort.",
+            "In severe cases, hospitalization may be necessary for proper care and monitoring.",
+            "Don't hesitate to seek medical attention if symptoms persist or worsen."
+        ]
+    },
+
+      {
+        "tag": "Arthritis",
+        "phrases": [
+          "Exercises for arthritis relief?",
+          "Can hot and cold therapy help with arthritis?",
+          "Any natural remedies for arthritis?",
+          "Tell me about arthritis massage techniques."
+        ],
+        "responses": [
+          "Exercise",
+          "Use hot and cold therapy",
+          "Try acupuncture",
+          "Massage"
+        ]
+      },
+      {
+        "tag": "Gastroenteritis",
+        "phrases": [
+          "I have gastroenteritis. What can I eat?",
+          "Any tips for easing back into eating with gastroenteritis?",
+          "How to deal with gastroenteritis symptoms?",
+          "Should I rest if I have gastroenteritis?"
+        ],
+        "responses": [
+          "Stop eating solid food for a while",
+          "Try taking small sips of water",
+          "Rest",
+          "Ease back into eating"
+        ]
+      },
+      {
+        "tag": "Tuberculosis",
+        "phrases": [
+          "How to cover my mouth to prevent tuberculosis spread?",
+          "Tell me more about tuberculosis medication.",
+          "Should I consult a doctor if I suspect tuberculosis?",
+          "Any tips for resting with tuberculosis?"
+        ],
+        "responses": [
+          "Cover mouth",
+          "Consult doctor",
+          "Medication",
+          "Rest"
+        ]
+      }
+    ]
+  }
+  
