@@ -5,7 +5,8 @@ from nltk_utils import bag_of_words, tokenize
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-with open('C:\\Users\\aller\\Desktop\\chatbot\\chatbot_nltk\\patterns.json') as json_data:
+with open('C:\\Users\\aller\\Desktop\\chatbot\\chatbot_nltk\\disease_precautions.json') as json_data:
+
 
     intents = json.load(json_data)
 
@@ -21,7 +22,7 @@ tags = data['tags']
 model_state = data["model_state"]
 
 
-model = NeuralNet(input_size, hidden_size, output_size, dropout_rate=0.5).to(device)
+model = NeuralNet(input_size, hidden_size, output_size, dropout_rate=0.3).to(device)
 model.load_state_dict(model_state)
 model.eval()
 
@@ -38,7 +39,7 @@ def get_response(msg):
 
     probs = torch.softmax(output, dim=1)
     prob = probs[0][predicted.item()]
-    if prob.item() > 0.60:
+    if prob.item() > 0.65:
         for intent in intents['intents']:
             if tag == intent["tag"]:
                 return random.choice(intent['responses'])
