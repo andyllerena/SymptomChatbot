@@ -37,15 +37,15 @@ def bag_of_words(tokenized_sentence, all_words):
     return bag
 
 # Read Excel file
-df = pd.read_excel('C:\\Users\\aller\\Desktop\\chatbot\\chatbot2\\dataset.xlsx')
+df = pd.read_excel('dataset.xlsx')
 
 # Specify the path to save the CSV file
-csv_file_path = 'C:\\Users\\aller\\Desktop\\chatbot\\chatbot2\\dataset.csv'
+csv_file_path = 'dataset.csv'
 
 # Save DataFrame to CSV format
 df.to_csv(csv_file_path, index=False)
 
-df = pd.read_csv('C:\\Users\\aller\\Desktop\\chatbot\\chatbot2\\dataset.csv')
+df = pd.read_csv('dataset.csv')
 df.columns = ['Symptoms','Disease']
 
 # Print first few rows of the DataFrame
@@ -62,6 +62,7 @@ print(df.dtypes)
 label_encoder = LabelEncoder()
 integer_encoded = label_encoder.fit_transform(df['Symptoms'])
 print(integer_encoded)
+
 
 # One Hot Encode the Labels
 onehot_encoder = OneHotEncoder(sparse_output=False)
@@ -102,10 +103,11 @@ df_concat = df_concat.groupby('Disease').sum()
 df_concat = df_concat.reset_index()
 df_concat[:5]
 
-df_concat.to_csv("C:\\Users\\aller\\Desktop\\chatbot\\chatbot2\\training_dataset.csv", index=False)
+df_concat.to_csv("training_dataset.csv", index=False)
 
 # One Hot Encoded Features
 X = df_concat[cols]
-
+print(X)
 # Labels
 y = df_concat['Disease']
+print(y)

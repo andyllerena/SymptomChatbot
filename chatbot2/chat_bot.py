@@ -6,6 +6,9 @@ import requests
 from joblib import load
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import string
+from nltk.stem import PorterStemmer
+from nltk.tokenize import word_tokenize
 # from duckduckgo_search import ddg
 
 all_result = {
@@ -16,7 +19,7 @@ all_result = {
 }
 
 # Load the dataset
-df = pd.read_excel('C:\\Users\\aller\\Desktop\\chatbot\\chatbot2\\dataset.xlsx')
+df = pd.read_excel('dataset.xlsx')
 # Get all unique symptoms
 symptoms = set()
 for s in df['Symptoms']:
@@ -34,12 +37,15 @@ def predict_symptom(user_input, symptom_list):
     similarity_scores = []
     for symptom in symptom_list:
         symptom_tokens = symptom.lower().replace("_"," ").split()
+        # print(symptom_tokens)
         count_vector = np.zeros((2, len(set(user_input_tokens + symptom_tokens))))
         for i, token in enumerate(set(user_input_tokens + symptom_tokens)):
             count_vector[0][i] = user_input_tokens.count(token)
             count_vector[1][i] = symptom_tokens.count(token)
+            #print(count_vector)
         similarity = cosine_similarity(count_vector)[0][1]
         similarity_scores.append(similarity)
+
     max_score_index = np.argmax(similarity_scores)
     return symptom_list[max_score_index]
 
@@ -47,7 +53,10 @@ def predict_symptom(user_input, symptom_list):
 def predict_disease_from_symptom(symptom_list, df):
     vectorizer = CountVectorizer()
     X = vectorizer.fit_transform(df['Symptoms'])
+    # print(X)
+    # print([', '.join(symptom_list)])
     user_X = vectorizer.transform([', '.join(symptom_list)])
+
     similarity_scores = cosine_similarity(X, user_X)
     max_score = similarity_scores.max()
     max_indices = similarity_scores.argmax(axis=0)
@@ -102,14 +111,31 @@ def get_disease_info(disease_name):
     except (KeyError, IndexError):
         return "Information not found or an error occurred."
 
+# preprocess user input
+def preprocess_input(input_text):
+    # remove punctuation
+    input_text = input_text.translate(str.maketrans('', '', string.punctuation))
+    # tokenize
+    tokens = word_tokenize(input_text)
+    # stemm the words
+    stemmer = PorterStemmer()
+    stemmed_tokens = [stemmer.stem(token) for token in tokens]
+    return stemmed_tokens
+
+
 # Main function to interact with the user
 def main_chatbot():
     print("Hello, I'm your medical assistant chatbot. Let's get started.")
     name = input("What's your name? ")
     age = input("How old are you? ")
     gender = input("What's your gender? (Male/Female/Other) ")
-    symptoms_input = input("Please list your symptoms, separated by commas: ")
-    symptoms_list = symptoms_input.split(',')
+    while(True):
+        symptoms_input = input("Please list your symptoms, separated by commas: ")
+        if(symptoms_input.strip() != ""):
+            break
+    # symptoms_list = symptoms_input.split(',')
+    symptoms_list = preprocess_input(symptoms_input)
+    print(symptoms_list)
     predicted_symptoms = [predict_symptom(symptom.strip(), list(symptoms)) for symptom in symptoms_list]
     predicted_disease, _ = predict_disease_from_symptom(predicted_symptoms, df)
     print(f"Based on the symptoms, the most likely disease is: {predicted_disease}")

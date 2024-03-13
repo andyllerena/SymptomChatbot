@@ -9,7 +9,7 @@ from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 import data_preparation
 
 # Load the dataset
-file_path = "C:\\Users\\aller\\Desktop\\chatbot\\chatbot2\\training_dataset.csv"
+file_path = "./training_dataset.csv"
 df = pd.read_csv(file_path)
 
 # Train Test Split
