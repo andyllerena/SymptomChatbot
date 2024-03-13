@@ -9,6 +9,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 import string
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
+from spellchecker import SpellChecker
+
 # from duckduckgo_search import ddg
 
 all_result = {
@@ -115,8 +117,19 @@ def get_disease_info(disease_name):
 def preprocess_input(input_text):
     # remove punctuation
     input_text = input_text.translate(str.maketrans('', '', string.punctuation))
+
+    # creates an instance of SpellChecker
+    spell = SpellChecker()
+    # find misspelled words
+    misspelled = spell.unknown(input_text.split())
+    # replace all misspelled word with correct word
+    for word in misspelled:
+        corrected_word = spell.correction(word)
+        input_text = input_text.replace(word, corrected_word)
+    print(input_text)
     # tokenize
     tokens = word_tokenize(input_text)
+    
     # stemm the words
     stemmer = PorterStemmer()
     stemmed_tokens = [stemmer.stem(token) for token in tokens]
@@ -130,8 +143,8 @@ def main_chatbot():
     age = input("How old are you? ")
     gender = input("What's your gender? (Male/Female/Other) ")
     while(True):
-        symptoms_input = input("Please list your symptoms, separated by commas: ")
-        if(symptoms_input.strip() != ""):
+        symptoms_input = input("Please list your symptoms, separated by commas: ").lower().strip()
+        if(symptoms_input != "" and not symptoms_input.isdigit() ):
             break
     # symptoms_list = symptoms_input.split(',')
     symptoms_list = preprocess_input(symptoms_input)
