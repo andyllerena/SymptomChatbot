@@ -1,111 +1,116 @@
-# Import necessary libraries
 import nltk 
 from nltk.stem.porter import PorterStemmer
 import numpy as np
-from sklearn import preprocessing
-import csv
 import pandas as pd
-import numpy as np
 from collections import defaultdict
+import csv
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+import spacy
 
+# Initialize spaCy for preprocessing
+nlp = spacy.load("en_core_web_lg")
 
-# Initialize a Porter Stemmer for word stemming
-stemmer = PorterStemmer()
+df = pd.read_excel('C:\\Users\\aller\\Desktop\\chatbot3\\SymptomChatbot\\raw_data.xlsx')
+data = df.fillna(method='ffill')
 
-# Tokenize function: Splits a sentence into individual words
-def tokenize(sentence):
-    return nltk.word_tokenize(sentence)
+def process_data(data):
+    data_list = []
+    data_name = data.replace('^','_').split('_')
+    n = 1
+    for names in data_name:
+        if (n % 2 == 0):
+            data_list.append(names)
+        n += 1
+    return data_list
 
-# Stemming function: Reduces a word to its base or root form
-def stem(word):
-    return stemmer.stem(word.lower())
-    
-# Bag of Words function: Converts a tokenized sentence into a numerical representation
-def bag_of_words(tokenized_sentence, all_words):
-    # Stem each word in the tokenized sentence
-    tokenized_sentence = [stem(w) for w in tokenized_sentence]
+# Data Cleanup
+disease_list = []
+disease_symptom_dict = defaultdict(list)
+disease_symptom_count = {}
+count = 0
 
-    # Initialize an array filled with zeros, representing the bag of words
-    bag = np.zeros(len(all_words), dtype=np.float32)
+for idx, row in data.iterrows():
+    if (row['Disease'] != "\xc2\xa0") and (row['Disease'] != ""):
+        disease = row['Disease']
+        disease_list = process_data(disease)
+        count = row['Count of Disease Occurrence']
+    if (row['Symptom'] != "\xc2\xa0") and (row['Symptom'] != ""):
+        symptom = row['Symptom']
+        symptom_list = process_data(symptom)
+        for d in disease_list:
+            for s in symptom_list:
+                disease_symptom_dict[d].append(s)
+            disease_symptom_count[d] = count
 
-    # Populate the bag of words with 1.0 if the word is present in the tokenized sentence
-    for idx, w in enumerate(all_words):
-        if w in tokenized_sentence:
-            bag[idx] = 1.0
+# Preprocess symptoms using spaCy for lemmatization and lowercase
+def preprocess_symptoms(symptom_list):
+    preprocessed = []
+    for symptom in symptom_list:
+        doc = nlp(symptom.lower())
+        lemmatized = ' '.join(token.lemma_ for token in doc)
+        preprocessed.append(lemmatized)
+    return preprocessed
 
-    return bag
+# Apply preprocessing to symptoms in the dictionary
+for disease, symptoms in disease_symptom_dict.items():
+    disease_symptom_dict[disease] = preprocess_symptoms(symptoms)
 
-# Read Excel file
-df = pd.read_excel('C:\\Users\\aller\\Desktop\\chatbot\\chatbot2\\dataset.xlsx')
+# Save cleaned data as CSV
+with open('cleaned_data.csv', 'w', newline='', encoding='utf-8') as f:
+    writer = csv.writer(f)
+    for disease, symptoms in disease_symptom_dict.items():
+        for symptom in symptoms:
+            writer.writerow([disease, symptom, disease_symptom_count[disease]])
 
-# Specify the path to save the CSV file
-csv_file_path = 'C:\\Users\\aller\\Desktop\\chatbot\\chatbot2\\dataset.csv'
+# Continue with the existing process to read, encode, and prepare data for training
+df = pd.read_csv('cleaned_data.csv', encoding='latin1')
+df.columns = ['disease', 'symptom', 'occurrence_count']
+df.replace(float('nan'), np.nan, inplace=True)
+df.dropna(inplace=True)
 
-# Save DataFrame to CSV format
-df.to_csv(csv_file_path, index=False)
+n_unique = len(df['symptom'].unique())
 
-df = pd.read_csv('C:\\Users\\aller\\Desktop\\chatbot\\chatbot2\\dataset.csv')
-df.columns = ['Symptoms','Disease']
-
-# Print first few rows of the DataFrame
-# print(df.head())
-
-# Count the number of unique symptoms
-n_unique = len(df['Symptoms'].unique())
-print(f'Number of unique symptoms: {n_unique}')
-
-# Print data types of each column
-print(df.dtypes)
-
-# Encode the Labels
 label_encoder = LabelEncoder()
-integer_encoded = label_encoder.fit_transform(df['Symptoms'])
-print(integer_encoded)
+integer_encoded = label_encoder.fit_transform(df['symptom'])
 
 # One Hot Encode the Labels
-onehot_encoder = OneHotEncoder(sparse_output=False)
+onehot_encoder = OneHotEncoder()
 integer_encoded = integer_encoded.reshape(len(integer_encoded), 1)
 onehot_encoded = onehot_encoder.fit_transform(integer_encoded)
-print(onehot_encoded)
-# print(onehot_encoded[0])
-print(len(onehot_encoded[0]))
 
-cols = np.asarray(df['Symptoms'].unique())
-#print(cols)
+cols = np.asarray(df['symptom'].unique())
 
 # Create a new dataframe to save OHE labels
 df_ohe = pd.DataFrame(columns = cols)
-for i in range(len(onehot_encoded)):
-    df_ohe.loc[i] = onehot_encoded[i]
-    
-# print(len(df_ohe))
+
+
+for i in range(onehot_encoded.shape[0]):
+    df_ohe.loc[i] = onehot_encoded[i].toarray()[0]
 
 # Disease Dataframe
-df_disease = df['Disease']
-# print(df_disease.head())
+df_disease = df['disease']
+
 
 # Concatenate OHE Labels with the Disease Column
 df_concat = pd.concat([df_disease,df_ohe], axis=1)
-# print(df_concat.head())
+
 
 df_concat.drop_duplicates(keep='first',inplace=True)
 
-# print(len(df_concat))
 
 cols = df_concat.columns
 
 cols = cols[1:]
 
 # Since, every disease has multiple symptoms, combine all symptoms per disease per row
-df_concat = df_concat.groupby('Disease').sum()
+df_concat = df_concat.groupby('disease').sum()
 df_concat = df_concat.reset_index()
-df_concat[:5]
+print (df_concat[:5])
 
-df_concat.to_csv("C:\\Users\\aller\\Desktop\\chatbot\\chatbot2\\training_dataset.csv", index=False)
+df_concat.to_csv("training_dataset1.csv", index=False)
 
 # One Hot Encoded Features
 X = df_concat[cols]
 
 # Labels
-y = df_concat['Disease']
+y = df_concat['disease']

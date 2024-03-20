@@ -1,3 +1,4 @@
+#train_model3.py
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn import tree
@@ -6,10 +7,12 @@ import pandas as pd
 import numpy as np
 from collections import defaultdict
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
-import SymptomChatbot.data_preparation3 as data_preparation3
+import data_preparation3 as data_preparation3
+import data_preparation3 as dp
+import joblib 
 
 # Load the dataset
-file_path = "C:\\Users\\aller\\Desktop\\chatbot\\chatbot2\\training_dataset.csv"
+file_path = 'C:\\Users\\aller\\Desktop\\chatbot3\\SymptomChatbot\\training_dataset1.csv'
 df = pd.read_csv(file_path)
 
 # Train Test Split
@@ -37,3 +40,8 @@ print("\nClassification Report:\n", classification_report(y_test, y_pred))
 
 # Confusion Matrix
 print("\nConfusion Matrix:\n", confusion_matrix(y_test, y_pred))
+
+model_filename = 'decision_tree_classifier.pkl'  # Name of the file to save the model
+joblib.dump(clf_dt, model_filename)  # Save the model
+
+print(f"Model saved to {model_filename}")
